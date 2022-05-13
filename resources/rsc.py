@@ -1,7 +1,7 @@
 import pandas as pd
-import numpy as pd
+import numpy as np
 
-def load_demographics(path) 
+def load_demographics(path):
     '''
     Load demographics data and clean common errors.
     Input: path e.g, "..\data\demographics_2021.csv"
