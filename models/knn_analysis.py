@@ -2,10 +2,8 @@ import numpy as np
 import matplotlib.pylab as plt
 import pandas as pd
 
-from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
-from sklearn.metrics import classification_report, confusion_matrix
-from sklearn.preprocessing import binarize
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
 
 import sys
@@ -39,24 +37,26 @@ X = df_filtered.iloc[:, :-1].values
 y = df_filtered.iloc[:, len(names)-1].values
 
 # Converting continuous values to binary
-# Assuming that a referendum is passed when yes_perc >= 67
-y = np.array([1 if x >=67 else 0 for x in y])
+# Assuming that a referendum is passed when yes_perc >= 51
+y = np.array([1 if x >=51 else 0 for x in y])
 
 # Splitting data into train, development and test
 X_train, X_test, X_dev, y_train, y_test, y_dev = sn.split(X, y)
 
+## Development data
+print("\nDevelopment data: \n")
 # Normalizing data
-X_train_reg, X_test_reg = sn.min_max_scaling(X_train, X_test)
+X_train_reg, X_dev_reg = sn.min_max_scaling(X_train, X_dev)
 
 # Training KNN Classifier
 classifier = KNeighborsClassifier(n_neighbors=5)
-classifier.fit(X_train, y_train)
+classifier.fit(X_train_reg, y_train)
 
-## Development data
 # Testing with development data
-y_dev_pred = classifier.predict(X_dev)
-print(confusion_matrix(y_dev, y_dev_pred))
-print(classification_report(y_dev, y_dev_pred))
+y_dev_pred = classifier.predict(X_dev_reg)
+print("Confusion matrix: \n", confusion_matrix(y_dev, y_dev_pred))
+print("Classification report: \n",classification_report(y_dev, y_dev_pred))
+print("Accuracy score: \n",accuracy_score(y_dev, y_dev_pred))
 
 error = []
 # Calculating error for K values between 1 and 40
@@ -65,7 +65,6 @@ for i in range(1, 40):
     knn.fit(X_train, y_train)
     pred_i_dev = knn.predict(X_dev)
     error.append(np.mean(pred_i_dev != y_dev))
-
 plt.figure(figsize=(12, 6))
 plt.plot(range(1, 40), error, color='red', linestyle='dashed', marker='o',
          markerfacecolor='blue', markersize=10)
@@ -74,11 +73,21 @@ plt.xlabel('K Value')
 plt.ylabel('Mean Error')
 
 
+
 ## Test data
+print("\nTest data: \n")
+# Normalizing data
+X_train_reg, X_test_reg = sn.min_max_scaling(X_train, X_test)
+
+# Training KNN Classifier
+classifier = KNeighborsClassifier(n_neighbors=5)
+classifier.fit(X_train_reg, y_train)
+
 # Testing with test data
-y_test_pred = classifier.predict(X_test)
-print(confusion_matrix(y_test, y_test_pred))
-print(classification_report(y_test, y_test_pred))
+y_test_pred = classifier.predict(X_test_reg)
+print("Confusion matrix: \n", confusion_matrix(y_test, y_test_pred))
+print("Classification report: \n",classification_report(y_test, y_test_pred))
+print("Accuracy score: \n",accuracy_score(y_test, y_test_pred))
 
 error = []
 # Calculating error for K values between 1 and 40

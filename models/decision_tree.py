@@ -54,11 +54,12 @@ clf_model.fit(X_train,y_train)
 
 
 ## Development data
+print("\nDevelopment data: \n")
 # Testing with development data
 y_dev_pred = clf_model.predict(X_dev)
-print(confusion_matrix(y_dev, y_dev_pred))
-print(classification_report(y_dev, y_dev_pred))
-print(accuracy_score(y_dev, y_dev_pred))
+print("Confusion matrix: \n", confusion_matrix(y_dev, y_dev_pred))
+print("Classification report: \n",classification_report(y_dev, y_dev_pred))
+print("Accuracy score: \n",accuracy_score(y_dev, y_dev_pred))
 
 # Plotting the Decision tree
 target = [0, 1]
@@ -80,11 +81,12 @@ print(r)
 
 
 ## Test data
-# Testing with development data
+# Testing with test data
+print("\nTest data: \n")
 y_test_pred = clf_model.predict(X_test)
-print(confusion_matrix(y_test, y_test_pred))
-print(classification_report(y_test, y_test_pred))
-print(accuracy_score(y_test, y_test_pred))
+print("Confusion matrix: \n", confusion_matrix(y_test, y_test_pred))
+print("Classification report: \n",classification_report(y_test, y_test_pred))
+print("Accuracy score: \n",accuracy_score(y_test, y_test_pred))
 
 # Plotting the Decision tree
 target = [0, 1]
@@ -101,5 +103,6 @@ feature_names = names[:-1]
 # print(graph)
 
 # Textual model
+print("Textual model: \n")
 r = export_text(clf_model, feature_names=feature_names)
 print(r)
