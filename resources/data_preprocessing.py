@@ -8,12 +8,12 @@ import numpy as np
 def load_demographics(path):
     '''
     Load demographics data and clean common errors.
-    Input: path e.g, "\data\demographics_2021.csv"
+    Input: path e.g, "data/demographics_2021.csv"
     Output: DF
     '''
 
     data = pd.read_csv(path, sep=';')
-    data.set_index('id')
+    data = data.set_index('id')
 
     for col in data.iloc[:,1:].columns:
         if data[col].dtype == "object":
@@ -27,14 +27,14 @@ def load_demographics(path):
 def load_referendum(path):
     '''
     Load referendum data and clean common errors.
-    Input: path e.g, "\data\face_coverings.csv"
+    Input: path e.g, "data/face_covering.csv"
     Output: DF
     '''
 
     data = pd.read_csv(path, sep=';')
-    data.set_index('municipality_id')
+    data = data.set_index('municipality_id')
 
-    for col in data.iloc[:,4:10].columns:
+    for col in data.iloc[:,3:].columns:
         if data[col].dtype == "object":
             data[col] = data[col].str.replace("\'","")
             data[col] = data[col].astype(float)
