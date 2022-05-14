@@ -1,0 +1,105 @@
+import numpy as np
+import matplotlib.pylab as plt
+import pandas as pd
+
+from sklearn.tree import DecisionTreeClassifier
+from sklearn import tree
+import graphviz
+from sklearn.tree import export_text
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+
+
+
+import sys
+import os
+
+sys.path.append(os.path.abspath('../resources'))
+import data_preprocessing as dp
+import split_normalization as sn
+
+file_dir = os.path.dirname(__file__)
+
+face_cov_filepath = os.path.join(file_dir,"..","data","face_covering.csv")
+demographics_filepath = os.path.join(file_dir,"..","data","demographics_2021.csv")
+
+# Loading data
+demographics = dp.load_demographics(demographics_filepath)
+face_covering = dp.load_referendum(face_cov_filepath)
+
+# Merging data
+merged_data = dp.merge_demographics_referendum(demographics, face_covering)
+
+# 'names' can be edited to select a different set of columns
+names = ['population_density', 'foreigner_percentage', \
+    'age_percentage_between_20_64', 'agriculture_surface_perc', \
+    'participation_rate', 'yes_perc']
+df_filtered = merged_data.filter(names, axis=1)
+
+
+# Filtering data
+X = df_filtered.iloc[:, :-1].values
+y = df_filtered.iloc[:, len(names)-1].values
+
+# Converting continuous values to binary
+# Assuming that a referendum is passed when yes_perc >= 51
+y = np.array([1 if x >=51 else 0 for x in y])
+
+# Splitting data into train, development and test
+X_train, X_test, X_dev, y_train, y_test, y_dev = sn.split(X, y)
+
+
+# Training Decision tree
+clf_model = DecisionTreeClassifier(criterion="gini", random_state=42, max_depth=3, min_samples_leaf=5)
+clf_model.fit(X_train,y_train)
+
+
+## Development data
+# Testing with development data
+y_dev_pred = clf_model.predict(X_dev)
+print(confusion_matrix(y_dev, y_dev_pred))
+print(classification_report(y_dev, y_dev_pred))
+print(accuracy_score(y_dev, y_dev_pred))
+
+# Plotting the Decision tree
+target = [0, 1]
+feature_names = names[:-1]
+
+# Graphical model
+# dot_data = tree.export_graphviz(clf_model,
+#                                 out_file=None,
+#                       feature_names=feature_names,
+#                       class_names=target,
+#                       filled=True, rounded=True,
+#                       special_characters=True)
+# graph = graphviz.Source(dot_data)
+# print(graph)
+
+# Textual model
+r = export_text(clf_model, feature_names=feature_names)
+print(r)
+
+
+## Test data
+# Testing with development data
+y_test_pred = clf_model.predict(X_test)
+print(confusion_matrix(y_test, y_test_pred))
+print(classification_report(y_test, y_test_pred))
+print(accuracy_score(y_test, y_test_pred))
+
+# Plotting the Decision tree
+target = [0, 1]
+feature_names = names[:-1]
+
+# Graphical model
+# dot_data = tree.export_graphviz(clf_model,
+#                                 out_file=None,
+#                       feature_names=feature_names,
+#                       class_names=target,
+#                       filled=True, rounded=True,
+#                       special_characters=True)
+# graph = graphviz.Source(dot_data)
+# print(graph)
+
+# Textual model
+r = export_text(clf_model, feature_names=feature_names)
+print(r)
