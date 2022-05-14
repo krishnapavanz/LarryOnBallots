@@ -52,8 +52,9 @@ def merge_demographics_referendum(demographics, referendum):
     '''
 
     # With the inner join we lose the votes from expats (7 rows in the face_covering file)
-    merged_data = demographics.merge(referendum, \
-        left_on='id', \
+    merged_data = demographics.reset_index().merge(referendum,
+        how='left',
+        left_on='id',
         right_on='municipality_id',
         suffixes=('_dem', '_ref'))
 

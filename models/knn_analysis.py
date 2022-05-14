@@ -30,6 +30,7 @@ names = ['population_density', 'foreigner_percentage', \
     'age_percentage_between_20_64', 'agriculture_surface_perc', \
     'participation_rate', 'yes_perc']
 df_filtered = merged_data.filter(names, axis=1)
+df_filtered = df_filtered.dropna()
 
 
 # Filtering data
