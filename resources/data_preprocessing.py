@@ -38,23 +38,23 @@ def load_referendum(path):
         if data[col].dtype == "object":
             data[col] = data[col].str.replace("\'","")
             data[col] = data[col].astype(float)
-    
+
     return data
 
 def merge_demographics_referendum(demographics, referendum):
     '''
-    Merge datasets of demographics and face covering. 
-    Inputs: 
+    Merge datasets of demographics and face covering.
+    Inputs:
         - demographics (DF)
         - referendum (DF)
-    Output: DF 
+    Output: DF
     '''
 
     # With the inner join we lose the votes from expats (7 rows in the face_covering file)
-    merged_data = demographics.merge(
-        referendum,
-        left_on='id', right_on='municipality_id',
+    merged_data = demographics.merge(referendum, \
+        left_on='id', \
+        right_on='municipality_id',
         suffixes=('_dem', '_ref'))
-    
+
     return merged_data
 

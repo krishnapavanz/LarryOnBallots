@@ -2,8 +2,10 @@ import numpy as np
 import matplotlib.pylab as plt
 import pandas as pd
 
-from sklearn.neighbors import KNeighborsClassifier
+
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
 
 
 import sys
@@ -43,63 +45,41 @@ y = np.array([1 if x >=51 else 0 for x in y])
 # Splitting data into train, development and test
 X_train, X_test, X_dev, y_train, y_test, y_dev = sn.split(X, y)
 
+
+logreg = LogisticRegression()
+# Instantiate the  model (using the default parameters)
+logreg = LogisticRegression()
+
+# fit the model with data
+logreg.fit(X_train,y_train)
+
+
 ## Development data
 print("\nDevelopment data: \n")
-# Normalizing data
-X_train_reg, X_dev_reg = sn.min_max_scaling(X_train, X_dev)
-
-# Training KNN Classifier
-classifier = KNeighborsClassifier(n_neighbors=5)
-classifier.fit(X_train_reg, y_train)
-
 # Testing with development data
-y_dev_pred = classifier.predict(X_dev_reg)
+y_dev_pred = logreg.predict(X_dev)
 print("Confusion matrix: \n", confusion_matrix(y_dev, y_dev_pred))
 print("Classification report: \n",classification_report(y_dev, y_dev_pred))
 print("Accuracy score: \n",accuracy_score(y_dev, y_dev_pred))
 
-error = []
-# Calculating error for K values between 1 and 40
-for i in range(1, 40):
-    knn = KNeighborsClassifier(n_neighbors=i)
-    knn.fit(X_train, y_train)
-    pred_i_dev = knn.predict(X_dev)
-    error.append(np.mean(pred_i_dev != y_dev))
-plt.figure(figsize=(12, 6))
-plt.plot(range(1, 40), error, color='red', linestyle='dashed', marker='o',
-         markerfacecolor='blue', markersize=10)
-plt.title('Error Rate K Value with Development data')
-plt.xlabel('K Value')
-plt.ylabel('Mean Error')
-
-
+y_dev_pred_proba = logreg.predict_proba(X_dev)[::,1]
+fpr, tpr, _ = metrics.roc_curve(y_dev,  y_dev_pred_proba)
+auc = metrics.roc_auc_score(y_dev,  y_dev_pred_proba)
+plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
+plt.legend(loc=4)
+plt.show()
 
 ## Test data
 print("\nTest data: \n")
-# Normalizing data
-X_train_reg, X_test_reg = sn.min_max_scaling(X_train, X_test)
-
-# Training KNN Classifier
-classifier = KNeighborsClassifier(n_neighbors=5)
-classifier.fit(X_train_reg, y_train)
-
-# Testing with test data
-y_test_pred = classifier.predict(X_test_reg)
+# Testing with development data
+y_test_pred = logreg.predict(X_test)
 print("Confusion matrix: \n", confusion_matrix(y_test, y_test_pred))
 print("Classification report: \n",classification_report(y_test, y_test_pred))
 print("Accuracy score: \n",accuracy_score(y_test, y_test_pred))
 
-error = []
-# Calculating error for K values between 1 and 40
-for i in range(1, 40):
-    knn = KNeighborsClassifier(n_neighbors=i)
-    knn.fit(X_train, y_train)
-    pred_i_test = knn.predict(X_test)
-    error.append(np.mean(pred_i_test != y_test))
-
-plt.figure(figsize=(12, 6))
-plt.plot(range(1, 40), error, color='red', linestyle='dashed', marker='o',
-         markerfacecolor='blue', markersize=10)
-plt.title('Error Rate K Value with Test data')
-plt.xlabel('K Value')
-plt.ylabel('Mean Error')
+y_test_pred_proba = logreg.predict_proba(X_test)[::,1]
+fpr, tpr, _ = metrics.roc_curve(y_test,  y_test_pred_proba)
+auc = metrics.roc_auc_score(y_test,  y_test_pred_proba)
+plt.plot(fpr,tpr,label="data 1, auc="+str(auc))
+plt.legend(loc=4)
+plt.show()
