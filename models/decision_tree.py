@@ -34,7 +34,7 @@ names = ['population_density', 'foreigner_percentage', \
     'age_percentage_between_20_64', 'agriculture_surface_perc', \
     'participation_rate', 'yes_perc']
 df_filtered = merged_data.filter(names, axis=1)
-
+df_filtered = df_filtered.dropna()
 
 # Filtering data
 X = df_filtered.iloc[:, :-1].values
@@ -43,6 +43,7 @@ y = df_filtered.iloc[:, len(names)-1].values
 # Converting continuous values to binary
 # Assuming that a referendum is passed when yes_perc >= 51
 y = np.array([1 if x >=51 else 0 for x in y])
+
 
 # Splitting data into train, development and test
 X_train, X_test, X_dev, y_train, y_test, y_dev = sn.split(X, y)
@@ -89,7 +90,7 @@ print("Classification report: \n",classification_report(y_test, y_test_pred))
 print("Accuracy score: \n",accuracy_score(y_test, y_test_pred))
 
 # Plotting the Decision tree
-target = [0, 1]
+target = ["0", "1"]
 feature_names = names[:-1]
 
 # Graphical model
