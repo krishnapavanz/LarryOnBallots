@@ -41,20 +41,20 @@ def load_referendum(path):
     
     return data
 
-def merge_dem_face_coverings(demographics, face_covering):
+def merge_demographics_referendum(demographics, referendum):
     '''
     Merge datasets of demographics and face covering. 
     Inputs: 
         - demographics (DF)
-        - face_covering (DF)
+        - referendum (DF)
     Output: DF 
     '''
 
     # With the inner join we lose the votes from expats (7 rows in the face_covering file)
     merged_data = demographics.merge(
-        face_covering,
+        referendum,
         left_on='id', right_on='municipality_id',
-        suffixes=('_dem', '_facecov'))
+        suffixes=('_dem', '_ref'))
     
     return merged_data
 
