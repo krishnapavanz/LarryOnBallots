@@ -4,6 +4,7 @@ Data preprocessing functions
 
 import pandas as pd
 import numpy as np
+from sklearn.impute import KNNImputer
 
 def load_demographics(path):
     '''
@@ -59,3 +60,22 @@ def merge_demographics_referendum(demographics, referendum):
 
     return merged_data
 
+
+
+def handle_na(dataframe, fill = "mean", nn = 10):
+    '''
+    For a dataframe, review NAs and select missing data handling method (mean, median, drop NA, or KNN)
+    '''
+    if fill == "mean":
+        dataframe.fillna(dataframe.mean(), inplace=True)
+    elif fill == "median":
+        dataframe.fillna(dataframe.median(), inplace=True)
+    elif fill == "drop":
+        dataframe.dropna()
+    elif fill == 'KNN':
+        imputer = KNNImputer(n_neighbors=nn)
+        dataframe.iloc[:,1:]= imputer.fit_transform(dataframe.iloc[:,1:])
+    else:
+        assert('input correct method')
+
+    return dataframe
