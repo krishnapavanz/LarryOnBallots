@@ -67,9 +67,9 @@ def handle_na(dataframe, fill = "mean", nn = 10):
     For a dataframe, review NAs and select missing data handling method (mean, median, drop NA, or KNN)
     '''
     if fill == "mean":
-        dataframe.fillna(dataset.median(), inplace=True)
+        dataframe.fillna(dataframe.mean(), inplace=True)
     elif fill == "median":
-        dataframe.fillna(dataset.mean(), inplace=True)
+        dataframe.fillna(dataframe.median(), inplace=True)
     elif fill == "drop":
         dataframe.dropna()
     elif fill == 'KNN':
