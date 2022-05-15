@@ -1,46 +1,31 @@
 '''
-Data preprocessing functions to identify colinearity among columns
-and create dummies for 
+Data preprocessing functions to identify colinearity among independent
+variables in the 'demographics_2021' dataset and create dummies for each 
+canton in the the 'face_covering' dataset.   
 '''
-
 import numpy as np
 import pandas as pd
-import time
-from statsmodels.stats.outliers_influence import variance_inflation_factor    
-from joblib import Parallel, delayed
+from patsy import dmatrices
+from statsmodels.stats.outliers_influence import variance_inflation_factor
 
-# Code taken from  https://stackoverflow.com
-def calculate_vif_(X, thresh=5.0):
-    variables = [X.columns[i] for i in range(X.shape[1])]
-    dropped=True
-    while dropped:
-        dropped=False
-        print(len(variables))
-        vif = Parallel(n_jobs=-1,verbose=5)(delayed(variance_inflation_factor)(X[variables].values, ix) for ix in range(len(variables)))
 
-        maxloc = vif.index(max(vif))
-        if max(vif) > thresh:
-            print(time.ctime() + ' dropping \'' + X[variables].columns[maxloc] + '\' at index: ' + str(maxloc))
-            variables.pop(maxloc)
-            dropped=True
-
-    print('Remaining variables:')
-    print([variables])
-    return X[[i for i in variables]]
-
-#X = df[feature_list] # Selecting your data
-
-#X2 = calculate_vif_(X,5) # Actually running the function
-
-def add_canton_dummies(dataframe):
+def calculate_vif(dataframe):
     '''
-    Adds 26 columns to the dataframe to create at dummy variable (1) for each state.
+    This function is written to be used with the 'demographics_2021' dataset.  
     '''
-    for row in dataframe.iterrows():
-        if dataframe['canton'] == 'Zurich':
-            df['Zurich_Dummy'] = 1
-        else:
-            df['Zurich_Dummy'] = 0 
-    # Need to update with the 25 other cantons.
-    return dataframe
+    variables = list(dataframe.columns)
+    del variables[0] # Removes the municipality column from the dataframe
+    variables = dataframe[variables] # Removes the municipality column from the dataframe
+    vif = pd.DataFrame()
+    vif['VIF'] = [variance_inflation_factor(variables.values,i) for i in range(variables.shape[1])]
+    vif['features'] = variables.columns
+    return vif
+
+
+def add_dummies(dataframe, column):
+    '''
+    Adds dummy variable columns to the dataframe for each unique value in the column
+    and returns a new dataframe with dummy columns added and the input column dropped.
+    '''
+    return pd.get_dummies(dataframe, columns=[column])
 
