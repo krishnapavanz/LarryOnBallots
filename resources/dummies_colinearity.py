@@ -1,7 +1,10 @@
 '''
 Data preprocessing functions to identify colinearity among independent
 variables in the 'demographics_2021' dataset and create dummies for each 
-canton in the the 'face_covering' dataset.   
+canton in the the 'face_covering' dataset.  
+
+calculate_vif function code taken and modified from Stackoverflow
+https://stackoverflow.com/questions/63795551/variance-inflation-factor-output-statsmodels
 '''
 import numpy as np
 import pandas as pd
