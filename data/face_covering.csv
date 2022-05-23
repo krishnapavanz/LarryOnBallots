@@ -1,4 +1,4 @@
-﻿canton_id;canton;municipality_id;municipality;registered_voters;cast_ballots;participation_rate;blank_votes;invalid_votes;valid_ballots;yes;no;yes_perc
+﻿canton_id;canton;municipality_id;municipality;registered_voters;cast_ballots;participation_rate;blank_votes;invalid_votes;valid_ballots;yes_count;no_count;yes_perc
 1;Zrich;1;Aeugst am Albis;1'438;842;58.6;7;0;835;413;422;49.5
 1;Zrich;2;Affoltern am Albis;7'192;3'529;49.1;22;1;3'506;1'738;1'768;49.6
 1;Zrich;3;Bonstetten;3'641;2'136;58.7;20;0;2'116;940;1'176;44.4

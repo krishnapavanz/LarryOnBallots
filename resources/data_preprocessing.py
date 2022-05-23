@@ -8,7 +8,7 @@ from sklearn.impute import KNNImputer
 
 def load_demographics(path):
     '''
-    Load demographics data and clean common errors.
+    Load demographics data and clean common errors as well as some feature engineering
     Input: path e.g, "data/demographics_2021.csv"
     Output: DF
     '''
@@ -23,11 +23,26 @@ def load_demographics(path):
             data[col] = data[col].replace("*", 0)
             data[col] = data[col].astype(float)
 
+    # Employemnt per-capita (per 5000)
+    data['employment_total'] = data['employment_total'] / data['population'] * 5000
+    data['employment_primary'] = data['employment_primary'] / data['population'] * 5000
+    data['employment_secondary'] = data['employment_secondary'] / data['population'] * 5000
+    data['employment_tertiary'] = data['employment_tertiary'] / data['population'] * 5000
+
+    # Establishments per-capita (per 5000)
+    data['establishments_total'] = data['establishments_total'] / data['population'] * 5000
+    data['establishments_primary'] = data['establishments_primary'] / data['population'] * 5000
+    data['establishments_secondary'] = data['establishments_secondary'] / data['population'] * 5000
+    data['establishments_tertiary'] = data['establishments_tertiary'] / data['population'] * 5000
+
+    # Empty housing per-capita (per 5000)
+    data['empty_housing_units'] = data['empty_housing_units'] / data['population'] * 5000
+
     return data
 
 def load_referendum(path):
     '''
-    Load referendum data and clean common errors.
+    Load referendum data and clean common errors as well as some feature engineering
     Input: path e.g, "data/face_covering.csv"
     Output: DF
     '''
@@ -39,6 +54,8 @@ def load_referendum(path):
         if data[col].dtype == "object":
             data[col] = data[col].str.replace("\'","")
             data[col] = data[col].astype(float)
+
+    data['yes'] = np.array([1 if yes_perc > 50 else 0 for yes_perc in data['yes_perc']])
 
     return data
 
@@ -80,29 +97,4 @@ def handle_na(dataframe, fill = "mean", nn = 10):
 
     return dataframe
 
-
-
-def feature_engineering(X):
-    """
-    Given a set of features, it performs feature engineering on certain of them.
-    This includes turning certain variables into per-capita or per-size
-
-    This includes:
-        - Employment per 5000 inhabitants
-        - Establishments per 5000 inhabitants
-    """
-    # Employemnt per-capita (per 5000)
-    X['employment_total'] = X['employment_total'] / X['population'] * 5000
-    X['employment_primary'] = X['employment_primary'] / X['population'] * 5000
-    X['employment_secondary'] = X['employment_secondary'] / X['population'] * 5000
-    X['employment_tertiary'] = X['employment_tertiary'] / X['population'] * 5000
-
-    # Establishments per-capita (per 5000)
-    X['establishments_total'] = X['establishments_total'] / X['population'] * 5000
-    X['establishments_primary'] = X['establishments_primary'] / X['population'] * 5000
-    X['establishments_secondary'] = X['establishments_secondary'] / X['population'] * 5000
-    X['establishments_tertiary'] = X['establishments_tertiary'] / X['population'] * 5000
-
-    # Empty housing per-capita (per 5000)
-    X['empty_housing_units'] = X['empty_housing_units'] / X['population'] * 5000
     
