@@ -79,3 +79,30 @@ def handle_na(dataframe, fill = "mean", nn = 10):
         assert('input correct method')
 
     return dataframe
+
+
+
+def feature_engineering(X):
+    """
+    Given a set of features, it performs feature engineering on certain of them.
+    This includes turning certain variables into per-capita or per-size
+
+    This includes:
+        - Employment per 5000 inhabitants
+        - Establishments per 5000 inhabitants
+    """
+    # Employemnt per-capita (per 5000)
+    X['employment_total'] = X['employment_total'] / X['population'] * 5000
+    X['employment_primary'] = X['employment_primary'] / X['population'] * 5000
+    X['employment_secondary'] = X['employment_secondary'] / X['population'] * 5000
+    X['employment_tertiary'] = X['employment_tertiary'] / X['population'] * 5000
+
+    # Establishments per-capita (per 5000)
+    X['establishments_total'] = X['establishments_total'] / X['population'] * 5000
+    X['establishments_primary'] = X['establishments_primary'] / X['population'] * 5000
+    X['establishments_secondary'] = X['establishments_secondary'] / X['population'] * 5000
+    X['establishments_tertiary'] = X['establishments_tertiary'] / X['population'] * 5000
+
+    # Empty housing per-capita (per 5000)
+    X['empty_housing_units'] = X['empty_housing_units'] / X['population'] * 5000
+    
