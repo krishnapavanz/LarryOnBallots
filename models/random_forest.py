@@ -15,8 +15,8 @@ def random_forest(X_train, X_dev, y_train, y_dev, random_state = True):
     accuracies = pd.DataFrame(columns = ['criterion', 'n_estimators', 'max_depth', 'accuracy'])
     i = 0
     for criterion in ['gini', 'entropy']:
-        for n_estimators in [1, 5, 10, 20]:#, 40, 80, 160]:
-            for max_depth in [1, 5, 10, 20]:#, 40, 80, 160]:
+        for n_estimators in [1, 5, 10, 20, 40, 80, 160]:
+            for max_depth in [1, 5, 10, 20, 40, 80, 160]:
                 if random_state:
                     random_forest_classifier = RandomForestClassifier(max_depth = max_depth, n_estimators = n_estimators, criterion = criterion, random_state = 123)
                 else:
@@ -31,7 +31,7 @@ def random_forest(X_train, X_dev, y_train, y_dev, random_state = True):
     return best_parameters, best_accuracy, accuracies 
 
 """
-BELOW IS TO DELETE ONCE NURIA COPIES IT
+BELOW IS TO DELETE ONCE NURIA COPIES IT - See the last chunk of code
 """
 
 import numpy as np
@@ -64,13 +64,27 @@ X_train, X_test, X_dev, y_train, y_test, y_dev = sn.split(X, y)
 accuracies = random_forest(X_train, X_dev, y_train, y_dev)[2]
 print(accuracies)
 
+gini_accuracies = accuracies.loc[accuracies['criterion'] == 'gini']
+print(gini_accuracies)
 
+"""
+Below is the plot for the notebook
+"""
 
-fig, ax = plt.subplots(figsize = (10, 8))
-ax.scatter(accuracies['max_depth'], accuracies['accuracy'], color = accuracies['criterion'])        ### color not working
-# ax.plot(x, y2, c = 'blue', label = 'y2') 
-# ax.set_xlabel('x') 
-# ax.set_ylabel('y')
-# ax.set_title('Question 1')
-#ax.legend()
+fig = plt.figure(figsize=(10,5))
+ax = fig.add_subplot(111, projection='3d')
+
+gini_accuracies = accuracies.loc[accuracies['criterion'] == 'gini']
+ax.scatter(gini_accuracies['max_depth'], gini_accuracies['n_estimators'], gini_accuracies['accuracy'], alpha = 1, color = 'red', label = 'Gini')
+
+entropy_accuracies = accuracies.loc[accuracies['criterion'] == 'entropy']
+ax.scatter(entropy_accuracies['max_depth'], entropy_accuracies['n_estimators'], entropy_accuracies['accuracy'], alpha = 1, color = 'blue', label = 'Entropy')
+
+ax.set_title("Accuracy According to Different Hyperparameters", fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 24})
+ax.set_xlabel('Max Depth', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
+ax.set_ylabel('Number of Trees', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
+ax.set_zlabel('Accuracy', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
+ax.legend()
+
+ax.view_init(15, 60)
 plt.show()
