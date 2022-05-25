@@ -4,23 +4,35 @@ from sklearn.ensemble import RandomForestClassifier
 
 def random_forest(X_train, X_dev, y_train, y_dev, random_state = True):
     """
-    Build a random forest
-
-    Parameters:
+    Build several random forests by varying the following parameters:
         - n_estimators: number of trees
-        - criterion: gini, entropy, etc.
+        - criterion: gini, entropy
         - max_depth: maximum depth of the tree
-        - random_state
+    
+    Inputs:
+        - X_train (pd.DataFrame): training features
+        - X_dev (pd.DataFrame): development features
+        - y_train (pd.DataFrame): training labels
+        - y_dev (pd.DataFrame): development labels
+        - random_state (bool): Whether we want to use a random state
+
+    Outputs:
+        - best_parameters (dict): {'criterion': best_criterion,
+            'n_estimators': best_n_estimators, 'max_depth': best_max_depth}
+        - best_accuracy (float): best development accuracy score
+        - accuracies (pd.DataFrame): accuracies for every combination of hyperparameters
     """
     accuracies = pd.DataFrame(columns = ['criterion', 'n_estimators', 'max_depth', 'accuracy'])
     i = 0
     for criterion in ['gini', 'entropy']:
-        for n_estimators in [1, 5, 10, 20, 40, 80, 160]:
-            for max_depth in [1, 5, 10, 20, 40, 80, 160]:
+        for n_estimators in [1, 5, 10, 20, 40, 80, 160, 200, 250, 300, 400, 500]:
+            for max_depth in [1, 5, 10, 20, 40, 80, 160, 200, 250, 300, 400, 500]:
                 if random_state:
-                    random_forest_classifier = RandomForestClassifier(max_depth = max_depth, n_estimators = n_estimators, criterion = criterion, random_state = 123)
+                    random_forest_classifier = RandomForestClassifier(max_depth = max_depth,\
+                        n_estimators = n_estimators, criterion = criterion, random_state = 123)
                 else:
-                    random_forest_classifier = RandomForestClassifier(max_depth = max_depth, n_estimators = n_estimators, criterion = criterion)
+                    random_forest_classifier = RandomForestClassifier(max_depth = max_depth,\
+                        n_estimators = n_estimators, criterion = criterion)
                 random_forest_classifier.fit(X_train, y_train)
                 accuracy = random_forest_classifier.score(X_dev, y_dev)
                 accuracies.loc[i] = [criterion, n_estimators, max_depth, accuracy]
@@ -29,6 +41,8 @@ def random_forest(X_train, X_dev, y_train, y_dev, random_state = True):
     best_row = accuracies.loc[accuracies['accuracy'] == best_accuracy]
     best_parameters = {key: best_row.loc[int(best_row.index[0]), key] for key in ['criterion', 'n_estimators', 'max_depth']}
     return best_parameters, best_accuracy, accuracies 
+
+
 
 """
 BELOW IS TO DELETE ONCE NURIA COPIES IT - See the last chunk of code
@@ -62,10 +76,8 @@ y = df_filtered.iloc[:, len(names)-1].values
 y = np.array([1 if x > 50 else 0 for x in y])
 X_train, X_test, X_dev, y_train, y_test, y_dev = sn.split(X, y)
 accuracies = random_forest(X_train, X_dev, y_train, y_dev)[2]
-print(accuracies)
 
-gini_accuracies = accuracies.loc[accuracies['criterion'] == 'gini']
-print(gini_accuracies)
+
 
 """
 Below is the plot for the notebook
