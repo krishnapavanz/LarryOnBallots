@@ -135,7 +135,7 @@ def logistic_reg_hp(X_train, y_train):
         a Pandas dataframe acc_df that contains columns
         ['params', 'mean_acc']
     """
-    model = LogisticRegression(max_iter=300)
+    model = LogisticRegression(max_iter=10000)
     solvers = ['newton-cg', 'lbfgs', 'liblinear']
     penalty = ['l2']
     c_values = [100, 10, 1.0, 0.1, 0.01]
