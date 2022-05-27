@@ -1,4 +1,5 @@
 from sklearn.neural_network import MLPClassifier
+import pandas as pd
 
 
 def fit_nn(X_train, X_dev, y_train, y_dev, random_state=True):
@@ -79,3 +80,13 @@ def plot_nn(accuracies):
 
     ax.view_init(15, 60)
     plt.show()
+
+def predict_best_model_nn(best_parameters_nn, X_test):
+    '''
+    Use best model parameters and predict values for Y test
+    '''
+    best_model_nn = MLPClassifier(solver='sgd', alpha=1e-4,
+                    hidden_layer_sizes=(best_parameters_nn['n_layers'], best_parameters_nn['n_nodes']), 
+                    activation = best_parameters_nn['activation_function'], random_state=123).fit(X_train, y_train)
+            
+    return best_model_nn.predict(X_test)
