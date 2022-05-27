@@ -137,9 +137,6 @@ best_parameters, best_accuracy, accuracies = random_forest(X_train, X_dev, y_tra
 
 
 plot_random_forest(accuracies)
-<<<<<<< HEAD
 print(predict_random_forest(best_parameters, X_train, y_train, np.array(X[:2, :]), random_state = True))
 '''
-=======
 print(predict_random_forest(best_parameters, X_train, y_train, np.array([X[0, :]]), random_state = True))
->>>>>>> 694f2348eac3b9e72c1e2561e22b26ed4de91da8
