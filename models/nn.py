@@ -47,7 +47,7 @@ def fit_nn(X_train, X_dev, y_train, y_dev, random_state=True):
 
     return best_parameters, best_accuracy, accuracies 
 
-best_model_nn = MLPClassifier(solver='sgd', alpha=1e-5,
+best_model_nn = MLPClassifier(solver='sgd', alpha=1e-4,
                     hidden_layer_sizes=(best_parameters['n_layers'], best_parameters['n_nodes']), 
                     activation = best_parameters['activation_function'], random_state=123).fit(X_train, y_train)
             
@@ -68,9 +68,6 @@ def plot_nn(accuracies_nn):
     fig = plt.figure(figsize=(10,5))
     ax = fig.add_subplot(111, projection='3d')
 
-    identity_accuracies = accuracies.loc[accuracies['activation_function'] == 'identity']
-    ax.scatter(identity_accuracies['n_layers'], identity_accuracies['n_nodes'], identity_accuracies['accuracy'], alpha = 1, color = 'red', label = 'Indetity')
-
     logistic_accuracies = accuracies.loc[accuracies['activation_function'] == 'logistic']
     ax.scatter(logistic_accuracies['n_layers'], logistic_accuracies['n_nodes'], logistic_accuracies['accuracy'], alpha = 1, color = 'black', label = 'Logistic')
 
@@ -78,7 +75,7 @@ def plot_nn(accuracies_nn):
     ax.scatter(tanh_accuracies['n_layers'], tanh_accuracies['n_nodes'], tanh_accuracies['accuracy'], alpha = 1, color = 'blue', label = 'Tanh')
 
     relu_accuracies = accuracies.loc[accuracies['activation_function'] == 'relu']
-    ax.scatter(relu_accuracies['n_layers'], relu_accuracies['n_nodes'], relu_accuracies['accuracy'], alpha = 1, color = 'orange', label = 'Relu')
+    ax.scatter(relu_accuracies['n_layers'], relu_accuracies['n_nodes'], relu_accuracies['accuracy'], alpha = 1, color = 'red', label = 'Relu')
 
 
     ax.set_title("Accuracy According to Different Hyperparameters", fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 24})
