@@ -47,14 +47,7 @@ def fit_nn(X_train, X_dev, y_train, y_dev, random_state=True):
 
     return best_parameters, best_accuracy, accuracies 
 
-best_model_nn = MLPClassifier(solver='sgd', alpha=1e-4,
-                    hidden_layer_sizes=(best_parameters['n_layers'], best_parameters['n_nodes']), 
-                    activation = best_parameters['activation_function'], random_state=123).fit(X_train, y_train)
-            
-predictions_nn = best_model_nn.predict(X_test)
-
-
-def plot_nn(accuracies_nn):
+def plot_nn(accuracies):
     '''
     3D plot of the nn's accuracies according to the number of layers,
     number of nodes, and activation function.
