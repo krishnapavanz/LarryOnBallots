@@ -25,8 +25,8 @@ def random_forest(X_train, X_dev, y_train, y_dev, random_state = True):
     accuracies = pd.DataFrame(columns = ['criterion', 'n_estimators', 'max_depth', 'accuracy'])
     i = 0
     for criterion in ['gini', 'entropy']:
-        for n_estimators in [1, 5, 10, 20, 40, 80, 160, 200, 250, 300, 400, 500]:
-            for max_depth in [1, 5, 10, 20, 40, 80, 160, 200, 250, 300, 400, 500]:
+        for n_estimators in [1, 5, 10, 20]:#, 40, 80, 160, 200, 250, 300, 400, 500]:
+            for max_depth in [1, 5, 10, 20]:#, 40, 80, 160, 200, 250, 300, 400, 500]:
                 if random_state:
                     random_forest_classifier = RandomForestClassifier(max_depth = max_depth,\
                         n_estimators = n_estimators, criterion = criterion, random_state = 123)
@@ -43,9 +43,66 @@ def random_forest(X_train, X_dev, y_train, y_dev, random_state = True):
     return best_parameters, best_accuracy, accuracies 
 
 
+def predict_random_forest(parameters, X_train, y_train, X, random_state = True):
+    """
+    Make predictions with given parameters
+    
+    Inputs:
+        - parameters (dict): {'criterion': best_criterion,
+            'n_estimators': best_n_estimators, 'max_depth': best_max_depth}¨
+        - X_train (pd.DataFrame): training features
+        - y_train (pd.DataFrame): training labels
+        - X (pd.DataFrame): Observation to predict (row)
+        - random_state (bool): Whether we want to use a random state
+    
+    Output:
+        - y (list of ints): predicted labels
+    """
+    if random_state:
+        random_forest_classifier = RandomForestClassifier(max_depth = parameters['max_depth'],\
+            n_estimators = parameters['n_estimators'], criterion = parameters['criterion'], random_state = 123)
+    else:
+        random_forest_classifier = RandomForestClassifier(max_depth = parameters['max_depth'],\
+            n_estimators = parameters['n_estimators'], criterion = parameters['criterion'])
+    
+    random_forest_classifier.fit(X_train, y_train)
+
+    return random_forest_classifier.predict(X)
+
+
+def plot_random_forest(accuracies):
+    """
+    3D plot of the random forest's accuracies according to the max_depth,
+    number of trees, and criterion.
+
+    Input:
+        - accuracies (pd.DataFrame): Accuracies of the random forest
+
+    Output:
+        - None (graph is displayed)
+    """
+    fig = plt.figure(figsize=(10,5))
+    ax = fig.add_subplot(111, projection='3d')
+
+    gini_accuracies = accuracies.loc[accuracies['criterion'] == 'gini']
+    ax.scatter(gini_accuracies['max_depth'], gini_accuracies['n_estimators'], gini_accuracies['accuracy'], alpha = 1, color = 'red', label = 'Gini')
+
+    entropy_accuracies = accuracies.loc[accuracies['criterion'] == 'entropy']
+    ax.scatter(entropy_accuracies['max_depth'], entropy_accuracies['n_estimators'], entropy_accuracies['accuracy'], alpha = 1, color = 'blue', label = 'Entropy')
+
+    ax.set_title("Accuracy According to Different Hyperparameters", fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 24})
+    ax.set_xlabel('Max Depth', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
+    ax.set_ylabel('Number of Trees', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
+    ax.set_zlabel('Accuracy', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
+    ax.legend()
+
+    ax.view_init(15, 60)
+    plt.show()
+
+
 
 """
-BELOW IS TO DELETE ONCE NURIA COPIES IT - See the last chunk of code
+BELOW IS CODE ONLY USED FOR TESTING. DELETE ONCE NOTEBOOK IS RUNNING
 """
 
 import numpy as np
@@ -75,28 +132,8 @@ X = df_filtered.iloc[:, :-1].values
 y = df_filtered.iloc[:, len(names)-1].values
 y = np.array([1 if x > 50 else 0 for x in y])
 X_train, X_test, X_dev, y_train, y_test, y_dev = sn.split(X, y)
-accuracies = random_forest(X_train, X_dev, y_train, y_dev)[2]
+best_parameters, best_accuracy, accuracies = random_forest(X_train, X_dev, y_train, y_dev)
 
 
-
-"""
-Below is the plot for the notebook
-"""
-
-fig = plt.figure(figsize=(10,5))
-ax = fig.add_subplot(111, projection='3d')
-
-gini_accuracies = accuracies.loc[accuracies['criterion'] == 'gini']
-ax.scatter(gini_accuracies['max_depth'], gini_accuracies['n_estimators'], gini_accuracies['accuracy'], alpha = 1, color = 'red', label = 'Gini')
-
-entropy_accuracies = accuracies.loc[accuracies['criterion'] == 'entropy']
-ax.scatter(entropy_accuracies['max_depth'], entropy_accuracies['n_estimators'], entropy_accuracies['accuracy'], alpha = 1, color = 'blue', label = 'Entropy')
-
-ax.set_title("Accuracy According to Different Hyperparameters", fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 24})
-ax.set_xlabel('Max Depth', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
-ax.set_ylabel('Number of Trees', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
-ax.set_zlabel('Accuracy', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
-ax.legend()
-
-ax.view_init(15, 60)
-plt.show()
+plot_random_forest(accuracies)
+print(predict_random_forest(best_parameters, X_train, y_train, np.array(X[:2, :]), random_state = True))
