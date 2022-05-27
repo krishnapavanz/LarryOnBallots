@@ -4,6 +4,8 @@ import pandas as pd
 
 from sklearn.model_selection import train_test_split
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 from sklearn.preprocessing import binarize
 
@@ -15,8 +17,8 @@ import sys
 import os
 
 sys.path.append(os.path.abspath('../resources'))
-import data_preprocessing as dp
-import split_normalization as sn
+#import data_preprocessing as dp
+#import split_normalization as sn
 
 # Assuming all data to be available
 
@@ -87,7 +89,8 @@ def decision_tree_hp(X_train, X_dev, y_train, y_dev):
     max_depth_tree = None
     acc_df = pd.DataFrame(columns=['criterion', 'depth', 'accu_rate'])
     # Calculating accuracy for criterion {“gini”, “entropy”, “log_loss”}
-    for crit in [“gini”, “entropy”, “log_loss”]:
+    criteria = ["gini", "entropy", "log_loss"]
+    for crit in criteria:
         for depth in range(1, 7, 1):
             clf_model = DecisionTreeClassifier(criterion=crit, random_state=42, max_depth=depth)
             clf_model.fit(X_train,y_train)
@@ -111,7 +114,7 @@ def decision_tree_max_hp(X_train, X_test, y_train, y_test, max_criterion, max_de
     Outputs: A dictionary with the keys and values for
         "confusion_matrix", "classification_report" and "accuracy_score"
     """
-    clf_model = DecisionTreeClassifier(criterion=crit, random_state=42, max_depth=depth)
+    clf_model = DecisionTreeClassifier(criterion=max_criterion, random_state=42, max_depth=max_depth_tree)
     clf_model.fit(X_train,y_train)
     y_test_pred = clf_model.predict(X_test)
     eval_dict = {"confusion_matrix":confusion_matrix(y_test, y_test_pred),\
@@ -165,7 +168,7 @@ def logistic_reg_max_hp(X_train, X_test, y_train, y_test, max_params):
         C = max_params["C"], solver = max_params["solver"], penalty =max_params["penalty"])
     logreg.fit(X_train,y_train)
     y_test_pred = logreg.predict(X_test)
-    eval_dict = {"confusion_matrix":confusion_matrix(y_test, y_test_pred),\
-        "classification_report":classification_report(y_test, y_test_pred),\
-        "accuracy_score":accuracy_score(y_test, y_test_pred)}
+    eval_dict = {"confusion_matrix": confusion_matrix(y_test, y_test_pred), \
+        "classification_report": classification_report(y_test, y_test_pred), \
+        "accuracy_score": accuracy_score(y_test, y_test_pred)}
     return eval_dict
