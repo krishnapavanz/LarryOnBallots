@@ -25,8 +25,8 @@ def random_forest(X_train, X_dev, y_train, y_dev, random_state = True):
     accuracies = pd.DataFrame(columns = ['criterion', 'n_estimators', 'max_depth', 'accuracy'])
     i = 0
     for criterion in ['gini', 'entropy']:
-        for n_estimators in [1, 5, 10, 20]:#, 40, 80, 160, 200, 250, 300, 400, 500]:
-            for max_depth in [1, 5, 10, 20]:#, 40, 80, 160, 200, 250, 300, 400, 500]:
+        for n_estimators in [1, 5, 10, 20, 40, 80, 160, 200, 250, 300, 400, 500]:
+            for max_depth in [1, 5, 10, 20, 40, 80, 160, 200, 250, 300, 400, 500]:
                 if random_state:
                     random_forest_classifier = RandomForestClassifier(max_depth = max_depth,\
                         n_estimators = n_estimators, criterion = criterion, random_state = 123)
@@ -136,4 +136,4 @@ best_parameters, best_accuracy, accuracies = random_forest(X_train, X_dev, y_tra
 
 
 plot_random_forest(accuracies)
-print(predict_random_forest(best_parameters, X_train, y_train, np.array(X[:2, :]), random_state = True))
+print(predict_random_forest(best_parameters, X_train, y_train, np.array([X[0, :]]), random_state = True))
