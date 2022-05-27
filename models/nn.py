@@ -60,7 +60,7 @@ def plot_nn(accuracies_nn):
     number of nodes, and activation function.
 
     Input:
-        - accuracies (pd.DataFrame): Accuracies of the random forest
+        - accuracies (pd.DataFrame): Accuracies of the nn
 
     Output:
         - None (graph is displayed)
