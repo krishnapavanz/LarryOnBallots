@@ -23,6 +23,9 @@ def load_demographics(path):
             data[col] = data[col].replace("*", 0)
             data[col] = data[col].astype(float)
 
+    # Private households per-capita (per 5000)
+    data['private_households'] = data['private_households'] / data['population'] * 5000
+
     # Employemnt per-capita (per 5000)
     data['employment_total'] = data['employment_total'] / data['population'] * 5000
     data['employment_primary'] = data['employment_primary'] / data['population'] * 5000
