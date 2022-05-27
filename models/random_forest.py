@@ -1,5 +1,6 @@
 from random import random
 import pandas as pd
+import matplotlib.pylab as plt
 from sklearn.ensemble import RandomForestClassifier
 
 def random_forest(X_train, X_dev, y_train, y_dev, random_state = True):
@@ -104,7 +105,7 @@ def plot_random_forest(accuracies):
 """
 BELOW IS CODE ONLY USED FOR TESTING. DELETE ONCE NOTEBOOK IS RUNNING
 """
-
+'''
 import numpy as np
 import matplotlib.pylab as plt
 import pandas as pd
@@ -137,3 +138,4 @@ best_parameters, best_accuracy, accuracies = random_forest(X_train, X_dev, y_tra
 
 plot_random_forest(accuracies)
 print(predict_random_forest(best_parameters, X_train, y_train, np.array(X[:2, :]), random_state = True))
+'''

@@ -25,10 +25,10 @@ def calculate_vif(dataframe):
     return vif
 
 
-def add_dummies(dataframe, column):
+def add_dummies(dataframe, cols):
     '''
     Adds dummy variable columns to the dataframe for each unique value in the column
     and returns a new dataframe with dummy columns added and the input column dropped.
     '''
-    return pd.get_dummies(dataframe, columns=[column])
+    return pd.get_dummies(dataframe, columns=cols)
 
