@@ -14,7 +14,6 @@ def plot_yes_perc_error(X, y, pred):
     ys = pd.DataFrame([X["municipality_dem"], X["yes_perc"], y, pred]).T
     ys.columns = ['municipality', 'yes_perc', 'y_test', 'y_pred']
     ys["error"] = np.absolute(ys["y_test"] - ys["y_pred"])
-    
     fig = px.scatter(ys, x="yes_perc", y="error", color="y_test", 
                     hover_data=["municipality"], title="% Yes & Error Rate",
                     labels={
