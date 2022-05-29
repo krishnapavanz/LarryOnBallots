@@ -1,5 +1,6 @@
 from sklearn.neural_network import MLPClassifier
 import pandas as pd
+import matplotlib.pylab as plt
 
 
 def fit_nn(X_train, X_dev, y_train, y_dev, random_state=True):
@@ -48,6 +49,7 @@ def fit_nn(X_train, X_dev, y_train, y_dev, random_state=True):
 
     return best_parameters, best_accuracy, accuracies 
 
+
 def plot_nn(accuracies):
     '''
     3D plot of the nn's accuracies according to the number of layers,
@@ -81,7 +83,8 @@ def plot_nn(accuracies):
     ax.view_init(15, 60)
     plt.show()
 
-def predict_best_model_nn(best_parameters_nn, X_test):
+
+def predict_best_model_nn(best_parameters_nn, X_train, y_train, X_test):
     '''
     Use best model parameters and predict values for Y test
     '''
