@@ -105,6 +105,23 @@ def handle_na(dataframe, fill = "mean", nn = 10):
 
 
 def load_data():
+    """
+    Takes care of the data loading process so that we get clean, split,
+    and normalized data.
+
+    Input:
+        - None
+    
+    Output:
+        - X_train (pd.DataFrame): training features
+        - X_test (pd.DataFrame): testing features
+        - X_dev (pd.DataFrame): development features
+        - y_train (pd.DataFrame): training labels
+        - y_test (pd.DataFrame): testing labels
+        - y_dev (pd.DataFrame): development labels
+        - X_attr (lst of str): X attributes
+    """
+
     # File paths
     file_dir = os.path.abspath('')
     face_cov_filepath = os.path.join(file_dir,"data","face_covering.csv")
