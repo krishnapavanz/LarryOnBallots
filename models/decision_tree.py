@@ -1,6 +1,7 @@
 import numpy as np
 import matplotlib.pylab as plt
 import pandas as pd
+#import pydotplus # I added this to display the decision tree grapyh (Bill)
 
 from sklearn.tree import DecisionTreeClassifier
 from sklearn import tree
@@ -8,14 +9,12 @@ import graphviz
 from sklearn.tree import export_text
 from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
 
-
-
 import sys
 import os
 
 sys.path.append(os.path.abspath('../resources'))
-import data_preprocessing as dp
-import split_normalization as sn
+import resources.data_preprocessing as dp  #I added 'resources.' to file path (Bill)
+import resources.split_normalization as sn #I added 'resources.' to file path (Bill)
 
 file_dir = os.path.dirname(__file__)
 
@@ -50,7 +49,10 @@ X_train, X_test, X_dev, y_train, y_test, y_dev = sn.split(X, y)
 
 
 # Training Decision tree
-clf_model = DecisionTreeClassifier(criterion="gini", random_state=42, max_depth=3, min_samples_leaf=5)
+clf_model = DecisionTreeClassifier(criterion="gini", 
+                                   random_state=42, 
+                                   max_depth=3, 
+                                   min_samples_leaf=5)
 clf_model.fit(X_train,y_train)
 
 
@@ -63,18 +65,24 @@ print("Classification report: \n",classification_report(y_dev, y_dev_pred))
 print("Accuracy score: \n",accuracy_score(y_dev, y_dev_pred))
 
 # Plotting the Decision tree
-target = [0, 1]
+#target = [0, 1]
+target = ['NO', 'YES'] # Updated to be string vice int type. (Bill)
 feature_names = names[:-1]
 
 # Graphical model
-# dot_data = tree.export_graphviz(clf_model,
-#                                 out_file=None,
-#                       feature_names=feature_names,
-#                       class_names=target,
-#                       filled=True, rounded=True,
-#                       special_characters=True)
-# graph = graphviz.Source(dot_data)
-# print(graph)
+dot_data = tree.export_graphviz(clf_model,
+                                out_file=None,
+                                #out_file='tree_graph_test.png',
+                                feature_names=feature_names,
+                                class_names=target,
+                                filled=True, rounded=True,      
+                                special_characters=True)
+graph = graphviz.Source(dot_data)
+print('type_graph:', type(graph))
+print(graph)
+#graph.render('dtree_render_', view=True)
+#graph.write_jpg('tree_graph_test')
+#graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
 
 # Textual model
 r = export_text(clf_model, feature_names=feature_names)
@@ -94,14 +102,14 @@ target = ["0", "1"]
 feature_names = names[:-1]
 
 # Graphical model
-# dot_data = tree.export_graphviz(clf_model,
-#                                 out_file=None,
-#                       feature_names=feature_names,
-#                       class_names=target,
-#                       filled=True, rounded=True,
-#                       special_characters=True)
-# graph = graphviz.Source(dot_data)
-# print(graph)
+dot_data = tree.export_graphviz(clf_model,
+                                out_file=None,
+                      feature_names=feature_names,
+                      class_names=target,
+                      filled=True, rounded=True,
+                      special_characters=True)
+graph = graphviz.Source(dot_data)
+print(graph)
 
 # Textual model
 print("Textual model: \n")
