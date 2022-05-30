@@ -63,10 +63,12 @@ def knn_analysis_max_k(X_train, X_test, y_train, y_test, max_k):
     classifier = KNeighborsClassifier(n_neighbors=max_k)
     classifier.fit(X_train, y_train)
     y_test_pred = classifier.predict(X_test)
+    '''
     eval_dict = {"confusion_matrix":confusion_matrix(y_test, y_test_pred),\
         "classification_report":classification_report(y_test, y_test_pred),\
         "accuracy_score":accuracy_score(y_test, y_test_pred)}
-    return eval_dict
+    '''
+    return y_test_pred
 
 
 def knn_k_plot(acc_df):
@@ -108,9 +110,9 @@ def decision_tree_hp(X_train, X_dev, y_train, y_dev):
     max_depth_tree = None
     acc_df = pd.DataFrame(columns=['criterion', 'depth', 'accu_rate'])
     # Calculating accuracy for criterion {“gini”, “entropy”, “log_loss”}
-    criteria = ["gini", "entropy", "log_loss"]
+    criteria = ["gini", "entropy"]
     for crit in criteria:
-        for depth in range(1, 7, 1):
+        for depth in range(1, len(X_train.columns)+1, 1):
             clf_model = DecisionTreeClassifier(criterion=crit, random_state=42, max_depth=depth)
             clf_model.fit(X_train,y_train)
             acc_rate = clf_model.score(X_dev, y_dev)
@@ -136,10 +138,12 @@ def decision_tree_max_hp(X_train, X_test, y_train, y_test, max_criterion, max_de
     clf_model = DecisionTreeClassifier(criterion=max_criterion, random_state=42, max_depth=max_depth_tree)
     clf_model.fit(X_train,y_train)
     y_test_pred = clf_model.predict(X_test)
+    '''
     eval_dict = {"confusion_matrix":confusion_matrix(y_test, y_test_pred),\
         "classification_report":classification_report(y_test, y_test_pred),\
         "accuracy_score":accuracy_score(y_test, y_test_pred)}
-    return eval_dict
+    '''
+    return (y_test_pred, clf_model)
 
 
 def logistic_reg_hp(X_train, X_dev, y_train, y_dev):
@@ -194,10 +198,12 @@ def logistic_reg_max_hp(X_train, X_test, y_train, y_test, max_params):
         C = max_params["C"], solver = max_params["solver"], penalty =max_params["penalty"])
     logreg.fit(X_train,y_train)
     y_test_pred = logreg.predict(X_test)
+    '''
     eval_dict = {"confusion_matrix": confusion_matrix(y_test, y_test_pred), \
         "classification_report": classification_report(y_test, y_test_pred), \
         "accuracy_score": accuracy_score(y_test, y_test_pred)}
-    return eval_dict
+    '''
+    return y_test_pred
 
 
 def logistic_reg_max_hp_coef(X_train, y_train, max_params):
