@@ -69,6 +69,25 @@ def knn_analysis_max_k(X_train, X_test, y_train, y_test, max_k):
     return eval_dict
 
 
+def knn_k_plot(acc_df):
+    """
+    Function that returns a k vs. accuracy plot for
+    a pre-defined KNN classifier model
+
+    Inputs: A Pandas dataframe acc_df that contains columns
+        ['k', 'accu_rate']
+
+    Returns: The matplotlib.pylab object with the k vs. accuracy plot
+    """
+    plt.figure(figsize=(12, 6))
+    plt.plot(acc_df["k"], acc_df["accu_rate"], color='red', \
+            linestyle='dashed', marker='o',
+            markerfacecolor='blue', markersize=10)
+    plt.title('K Value vs. Accuracy rate')
+    plt.xlabel('K Value')
+    plt.ylabel('Accuracy rate')
+    return plt
+
 def decision_tree_hp(X_train, X_dev, y_train, y_dev):
     """
     Function that takes the Train and Development data and finds the
@@ -123,7 +142,7 @@ def decision_tree_max_hp(X_train, X_test, y_train, y_test, max_criterion, max_de
     return eval_dict
 
 
-def logistic_reg_hp(X_train, y_train):
+def logistic_reg_hp(X_train, X_dev, y_train, y_dev):
     """
     Function that takes the Train data and finds the
     Logistic Regression model with the best hyper parameters
@@ -135,6 +154,13 @@ def logistic_reg_hp(X_train, y_train):
         a Pandas dataframe acc_df that contains columns
         ['params', 'mean_acc']
     """
+    # Append train and dev data for this model as
+    # RepeatedStratifiedKFold uses Cross-validation to
+    # come up with best hyper-parameters for the model
+
+    X_train = X_train.append(X_dev, ignore_index=True)
+    y_train = y_train.append(y_dev, ignore_index=True)
+
     model = LogisticRegression(max_iter=10000)
     solvers = ['newton-cg', 'lbfgs', 'liblinear']
     penalty = ['l2']
@@ -172,3 +198,21 @@ def logistic_reg_max_hp(X_train, X_test, y_train, y_test, max_params):
         "classification_report": classification_report(y_test, y_test_pred), \
         "accuracy_score": accuracy_score(y_test, y_test_pred)}
     return eval_dict
+
+
+def logistic_reg_max_hp_coef(X_train, y_train, max_params):
+    """
+    Function that takes the Train and Test data and
+     returns the coefficients and the intercept for
+        the Logistic regression model
+
+    Inputs: X_train, X_test, y_train, y_test, max_params
+
+    Returns: A tuple with coefficients and the intercept for
+        the model
+    """
+    logreg = LogisticRegression(random_state=0, \
+        C = max_params["C"], solver = max_params["solver"], \
+        penalty =max_params["penalty"])
+    logreg.fit(X_train,y_train)
+    return (logreg.coef_, logreg.intercept_)
