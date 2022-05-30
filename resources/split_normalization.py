@@ -59,21 +59,25 @@ def min_max_scaling(X_train, X_test, X_dev):
     return X_train_reg, X_test_reg, X_dev_reg
 
 
-def standard_scaling(X_train, X_test):
+def standard_scaling(X_train, X_test, X_dev):
     '''
     Apply standard scaling to the feature data
 
     Inputs:
         - X_train (pd.DataFrame): train features
         - X_test (pd.DataFrame): test features
+        - X_dev (pd.DataFrame): development features
     
     Outputs:
         - X_train_reg (pd.DataFrame): normalized train features
         - X_test_reg (pd.DataFrame): normalized test features
+        - X_dev_reg (pd.DataFrame): normalized development features
     '''
     scaler = StandardScaler()
     scaler.fit(X_train)
+
     X_train_reg = pd.DataFrame(scaler.transform(X_train))
     X_test_reg = pd.DataFrame(scaler.transform(X_test))
     X_dev_reg = pd.DataFrame(scaler.transform(X_dev))
+
     return X_train_reg, X_test_reg, X_dev_reg

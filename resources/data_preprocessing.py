@@ -2,9 +2,12 @@
 Data preprocessing functions
 '''
 
+import os
 import pandas as pd
 import numpy as np
 from sklearn.impute import KNNImputer
+import resources.dummies_colinearity as dc
+import resources.split_normalization as sn
 
 def load_demographics(path):
     '''
@@ -100,4 +103,83 @@ def handle_na(dataframe, fill = "mean", nn = 10):
 
     return dataframe
 
+
+def load_data():
+    """
+    Takes care of the data loading process so that we get clean, split,
+    and normalized data.
+
+    Input:
+        - None
     
+    Output:
+        - X_train (pd.DataFrame): training features
+        - X_test (pd.DataFrame): testing features
+        - X_dev (pd.DataFrame): development features
+        - y_train (pd.DataFrame): training labels
+        - y_test (pd.DataFrame): testing labels
+        - y_dev (pd.DataFrame): development labels
+        - X_attr (lst of str): X attributes
+    """
+
+    # File paths
+    file_dir = os.path.abspath('')
+    face_cov_filepath = os.path.join(file_dir,"data","face_covering.csv")
+    demographics_filepath = os.path.join(file_dir,"data","demographics_2021.csv")
+
+    # Load data
+    demographics = load_demographics(demographics_filepath)
+    face_covering = load_referendum(face_cov_filepath)
+
+    # Merge data
+    merged_data_raw = merge_demographics_referendum(demographics, face_covering)
+    merged_data_raw = merged_data_raw[merged_data_raw['yes'].notna()]
+
+    # Remove irrelevant attributes
+    rm_attr = ["id", "canton_id", "municipality_ref", "age_percentage_less_20", "death_rate",
+            "social_aid_perc", "employment_total", "establishments_total", "establishments_primary",
+            "establishments_secondary", "establishments_tertiary",
+            "registered_voters", "blank_votes", "invalid_votes", "valid_ballots", "yes_count", "no_count"]
+    merged_data = merged_data_raw.drop(rm_attr, axis = 1)
+
+    # Create dummy columns for categorical attributes
+    dummy_cols = ["canton"]
+    merged_data = dc.add_dummies(merged_data, dummy_cols)
+
+    # Separate X and y
+    X_attr = merged_data.columns.to_list()
+    X_attr.remove('yes')
+    X = merged_data.drop(["yes"], axis = 1)
+    y_attr = "yes"
+    y = merged_data["yes"]
+
+    # Split data into train, development and test
+    X_train_all, X_test_all, X_dev_all, y_train, y_test, y_dev = sn.split(X, y)
+    print("Shapes:\nX_train :", X_train_all.shape, "\nX_dev: ", X_dev_all.shape, "\nX_test: ", X_test_all.shape)
+
+    # Handle NAs
+    for dataframe in [X_train_all, X_test_all, X_dev_all]:
+        dataframe = handle_na(dataframe, fill = "KNN", nn=5)
+
+    # Remove yes_perc (required later for evaluation)
+    X_train = X_train_all.drop(["yes_perc", "municipality_dem"], axis = 1)
+    X_test = X_test_all.drop(["yes_perc", "municipality_dem"], axis = 1)
+    X_dev = X_dev_all.drop(["yes_perc", "municipality_dem"], axis = 1)
+
+    # Save column names
+    X_cols = X_train.columns
+
+    # Scale attributes
+    X_train, X_test, X_dev = sn.min_max_scaling(X_train, X_test, X_dev)
+
+    # Add column names
+    X_train.columns = X_cols
+    X_test.columns = X_cols
+    X_dev.columns = X_cols
+
+    # Round to 6 decimal places
+    X_train = X_train.round(6)
+    X_test = X_test.round(6)
+    X_dev = X_dev.round(6)
+
+    return X_train, X_test, X_dev, y_train, y_test, y_dev, X_attr

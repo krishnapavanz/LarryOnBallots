@@ -1,5 +1,6 @@
 from sklearn.neural_network import MLPClassifier
 import pandas as pd
+import matplotlib.pylab as plt
 
 
 def fit_nn(X_train, X_dev, y_train, y_dev, random_state=True):
@@ -31,10 +32,10 @@ def fit_nn(X_train, X_dev, y_train, y_dev, random_state=True):
         for n_layer in n_layers:
             for n_node in n_nodes:
                 if random_state:
-                    classifier = MLPClassifier(solver='sgd', alpha=1e-4,
+                    classifier = MLPClassifier(solver='sgd', alpha=1e-3,
                         hidden_layer_sizes=(n_layer, n_node), activation = activation_function, random_state=123)
                 else:
-                    classifier = MLPClassifier(solver='sgd', alpha=1e-4,
+                    classifier = MLPClassifier(solver='sgd', alpha=1e-3,
                         hidden_layer_sizes=(n_layer, n_node), activation = activation_function)
 
                 classifier.fit(X_train, y_train)
@@ -47,6 +48,7 @@ def fit_nn(X_train, X_dev, y_train, y_dev, random_state=True):
     best_parameters = {key: best_row.loc[int(best_row.index[0]), key] for key in ['activation_function', 'n_layers', 'n_nodes']}
 
     return best_parameters, best_accuracy, accuracies 
+
 
 def plot_nn(accuracies):
     '''
@@ -81,11 +83,12 @@ def plot_nn(accuracies):
     ax.view_init(15, 60)
     plt.show()
 
-def predict_best_model_nn(best_parameters_nn, X_test):
+
+def predict_best_model_nn(best_parameters_nn, X_train, y_train, X_test):
     '''
     Use best model parameters and predict values for Y test
     '''
-    best_model_nn = MLPClassifier(solver='sgd', alpha=1e-4,
+    best_model_nn = MLPClassifier(solver='sgd', alpha=1e-3,
                     hidden_layer_sizes=(best_parameters_nn['n_layers'], best_parameters_nn['n_nodes']), 
                     activation = best_parameters_nn['activation_function'], random_state=123).fit(X_train, y_train)
             
