@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 import matplotlib.pylab as plt
 from sklearn.ensemble import RandomForestClassifier
@@ -25,8 +26,8 @@ def random_forest(X_train, X_dev, y_train, y_dev, random_state = True):
     accuracies = pd.DataFrame(columns = ['criterion', 'n_estimators', 'max_depth', 'accuracy'])
     i = 0
     for criterion in ['gini', 'entropy']:
-        for n_estimators in [1, 5, 10, 20]:#, 40, 80, 160, 200, 250, 300, 400, 500]:
-            for max_depth in [1, 5, 10, 20]:#, 40, 80, 160, 200, 250, 300, 400, 500]:
+        for n_estimators in [1, 5, 10, 20, 40, 80, 160, 200, 250, 300, 400, 500]:
+            for max_depth in [1, 5, 10, 20, 40, 80, 160, 200, 250, 300, 400, 500]:
                 if random_state:
                     random_forest_classifier = RandomForestClassifier(max_depth = max_depth,\
                         n_estimators = n_estimators, criterion = criterion, random_state = 123)
@@ -96,5 +97,99 @@ def plot_random_forest(accuracies):
     ax.set_zlabel('Accuracy', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
     ax.legend()
 
-    ax.view_init(15, 60)
+    ax.view_init(10, 20)
+    plt.show()
+
+
+def feature_importance_random_forest(X_train, y_train, parameters, random_state = True):
+    """
+    Feature importance based on mean decrease in impurity.
+    """
+    if random_state:
+        random_forest_classifier = RandomForestClassifier(max_depth = parameters['max_depth'],\
+            n_estimators = parameters['n_estimators'], criterion = parameters['criterion'], random_state = 123)
+    else:
+        random_forest_classifier = RandomForestClassifier(max_depth = parameters['max_depth'],\
+            n_estimators = parameters['n_estimators'], criterion = parameters['criterion'])
+
+    random_forest_classifier.fit(X_train, y_train)
+
+    importances = random_forest_classifier.feature_importances_
+    importances_std = np.std([forest.feature_importances_ for forest in random_forest_classifier.estimators_], axis = 0)
+
+    forest_importances = pd.Series(importances, index = X_train.columns)
+    forest_importances.sort_values(ascending = False, inplace = True)
+    forest_importances.rename({
+        'population': 'pop',
+        'population_variation': 'pop_var',
+        'population_density': 'pop_den',
+        'foreigner_percentage': 'for_per',
+        'age_percentage_between_20_64': 'age_bet_20_64',
+        'age_percentage_more_64': 'age_over_64',
+        'marriage_rate': 'marriage_rate',
+        'divorce_rate': 'divorce_rate',
+        'birth_rate': 'birth_rate',
+        'private_households': 'private_hous',
+        'avg_household_size': 'avg_hous_size',
+        'total_surface': 'tot_surf',
+        'housing_and_infrastructure_surface': 'hous_inf_surf',
+        'housing_and_infrastructure_surface_variation': 'hous_inf_surf_var',
+        'agriculture_surface_perc': 'agr_surf',
+        'agriculture_variation_surface_perc': 'agr_surf_var',
+        'forest_surface_perc': 'for_surf',
+        'unproductive_surface_perc': 'unprod_surf',
+        'employment_primary': ' emp_pri',
+        'employment_secondary': 'emp_sec',
+        'employment_tertiary': 'emp_ter',
+        'empty_housing_units': 'empty_hous',
+        'new_housing_units_per_capita': 'new_hous_pc',
+        'PLR': 'party_PLR',
+        'PDC': 'party_PDC',
+        'PS': 'party_PS',
+        'UDC': 'party_UDC',
+        'PEV_PCS': 'party_PEV',
+        'PVL': 'party_PVL',
+        'PBD': 'party_PBD',
+        'PST_Sol': 'party_PST',
+        'PES': 'party_PES',
+        'small_right_parties': 'party_sm_right',
+        'canton_Aargau': 'canton_AG',
+        'canton_Appenzell_Ausserrhoden': 'canton_AR',
+        'canton_Appenzell_Innerrhoden': 'canton_AI',
+        'canton_Basel_Landschaft': 'canton_BL',
+        'canton_Basel_Stadt': 'canton_BS',
+        'canton_Bern': 'canton_BE',
+        'canton_Fribourg': 'canton_FR',
+        'canton_Geneve': 'canton_GE',
+        'canton_Glarus': 'canton_GL',
+        'canton_Graubunden': 'canton_GR',
+        'canton_Jura': 'canton_JU',
+        'canton_Luzern': 'canton_LU',
+        'canton_Neuchatel': 'canton_NE',
+        'canton_Nidwalden': 'canton_NI',
+        'canton_Obwalden': 'canton OW',
+        'canton_Schaffhausen': 'canton_SH',
+        'canton_Schwyz': 'canton_SZ',
+        'canton_Solothurn': 'canton_SO',
+        'canton_St_Gallen': 'canton_SG',
+        'canton_Thurgau': 'canton_TG',
+        'canton_Ticino': 'canton_TI',
+        'canton_Uri': 'canton_UR',
+        'canton_Wallis': 'canton_VS',
+        'canton_Vaud': 'canton_VD',
+        'canton_Zug': 'canton_ZG',
+        'canton_Zurich': 'canton_ZH'
+    }, inplace = True)
+
+    fig = plt.figure(figsize=(15, 5))
+    ax = fig.add_subplot(111)
+    forest_importances.plot.bar(yerr = importances_std, ax = ax)
+
+    ax.set_title("Feature importance for the Random Forest using MDI", fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 24})
+    ax.set_xlabel('Features', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
+    ax.set_ylabel('Mean Decrease in Impurity', fontdict={'family': 'serif', 'color':  'darkred', 'weight': 'normal', 'size': 18})
+
+    plt.rcParams.update({'font.size': 9})
+    fig.tight_layout()
+
     plt.show()
