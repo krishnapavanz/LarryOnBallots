@@ -32,10 +32,10 @@ def fit_nn(X_train, X_dev, y_train, y_dev, random_state=True):
         for n_layer in n_layers:
             for n_node in n_nodes:
                 if random_state:
-                    classifier = MLPClassifier(solver='sgd', alpha=1e-4,
+                    classifier = MLPClassifier(solver='sgd', alpha=1e-3,
                         hidden_layer_sizes=(n_layer, n_node), activation = activation_function, random_state=123)
                 else:
-                    classifier = MLPClassifier(solver='sgd', alpha=1e-4,
+                    classifier = MLPClassifier(solver='sgd', alpha=1e-3,
                         hidden_layer_sizes=(n_layer, n_node), activation = activation_function)
 
                 classifier.fit(X_train, y_train)
@@ -88,7 +88,7 @@ def predict_best_model_nn(best_parameters_nn, X_train, y_train, X_test):
     '''
     Use best model parameters and predict values for Y test
     '''
-    best_model_nn = MLPClassifier(solver='sgd', alpha=1e-4,
+    best_model_nn = MLPClassifier(solver='sgd', alpha=1e-3,
                     hidden_layer_sizes=(best_parameters_nn['n_layers'], best_parameters_nn['n_nodes']), 
                     activation = best_parameters_nn['activation_function'], random_state=123).fit(X_train, y_train)
             
