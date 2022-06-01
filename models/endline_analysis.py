@@ -145,6 +145,36 @@ def decision_tree_max_hp(X_train, X_test, y_train, y_test, max_criterion, max_de
     '''
     return (y_test_pred, clf_model)
 
+def decision_tree_depth_plot(acc_df):
+    """
+    Function that returns a depth vs. accuracy plot for
+    a pre-defined decision tree classifier model
+
+    Inputs: 
+        - A Pandas dataframe acc_df that contains columns
+          ['criterion', 'depth', 'accu_rate']
+
+    Returns: The matplotlib.pylab object with the depth vs. accuracy plot
+    """
+    acc_df_gini = acc_df[acc_df.criterion == 'gini']
+
+    acc_df_entropy = acc_df[acc_df.criterion == 'entropy']
+   
+   
+    plt.figure(figsize=(12, 6))
+    plt.plot(acc_df_gini["depth"], acc_df_gini["accu_rate"], color='red', \
+            linestyle='dashed', marker='o',
+            markerfacecolor='blue', markersize=6, label = 'gini')
+
+    plt.plot(acc_df_entropy["depth"], acc_df_entropy["accu_rate"], color='green', \
+            linestyle='dashed', marker='o',
+            markerfacecolor='yellow', markersize=6, label = 'entropy')
+    plt.title('Depth vs. Accuracy rate')
+    plt.xlabel('Depth')
+    plt.ylabel('Accuracy rate')
+    plt.legend()
+    plt.show()
+    return plt
 
 def logistic_reg_hp(X_train, X_dev, y_train, y_dev):
     """
