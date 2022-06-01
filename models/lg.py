@@ -102,8 +102,8 @@ def logistic_reg_plot(attr, logreg):
 
     fig = px.bar(df, y='weight', x='attribute', text_auto='.2s',
                 title="Weights of Logistic Regression",
-                width=1000, height=800)
+                width=1000, height=700)
     fig.update_traces(textfont_size=12, textangle=0, textposition="outside", cliponaxis=False)
-    
+
     return fig
 
