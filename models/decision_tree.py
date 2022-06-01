@@ -46,7 +46,7 @@ y = np.array([1 if x >=51 else 0 for x in y])
 
 # Splitting data into train, development and test
 X_train, X_test, X_dev, y_train, y_test, y_dev = sn.split(X, y)
-
+l
 
 # Training Decision tree
 clf_model = DecisionTreeClassifier(criterion="gini", 
