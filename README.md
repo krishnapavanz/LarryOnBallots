@@ -14,3 +14,12 @@ Main content:
     - model_evaluation_no_pp.ipynb : evaluation analysis with no political data
 - /plots
 - /submissions
+
+Methodology:
+We proceed to experiment with 5 different machine learning models; logistic regression,
+KNN, decision tree, random forest, and neural networks.
+● Logistic regression: a good accuracy would suggest log-linear relationships between the features and the voting outcome.
+● KNN: a high accuracy would indicate that similar municipalities have the same voting patterns, although it assumes equal importance for all features.
+● Decision Tree: yields good insights into which features are good predictors for voting outcomes.
+● Random Forest: more robust than a single decision tree so we will be able to extract the most important features with more certainty than with the decision tree.
+● Neural Network: if it turns out to be the best model, we could conclude that voting patterns are complex.
