@@ -3,7 +3,7 @@ The goal of the project is to divide Switzerland municipality-level census data 
 
 ![Official LarrOnBallots Logo](data/LarryInOnFireBallots.jpg)
 
-Main content: 
+## Main content: 
 - /data
     - demographics_2021.csv : demographic data
     - face_covering.csv : referendum results data
@@ -15,7 +15,7 @@ Main content:
 - /plots
 - /submissions
 
-Methodology:
+## Methodology:    
 We proceed to experiment with 5 different machine learning models; logistic regression,
 KNN, decision tree, random forest, and neural networks.
 - Logistic regression: a good accuracy would suggest log-linear relationships between the features and the voting outcome.
